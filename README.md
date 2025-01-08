@@ -1,5 +1,5 @@
-# AimPro
-## Your personal aim training site
+## AimPro
+### Your personal aim training site
 
 # Getting Started with Create React App
 
