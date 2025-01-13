@@ -88,10 +88,10 @@ function App() {
     let attempts = 0;
     do {
       newPosition = [
-        Math.random() * 7 - 5, // x: -5 ~ 5
-        Math.random() * 7 - 5, // y: -5 ~ 5
+        Math.random() * 7 - 7, // x: -5 ~ 5
+        Math.random() * 7 - 7, // y: -5 ~ 5
         // -5, // z 고정
-        Math.random() * 3 - 2, // y: -5 ~ 5
+        Math.random() * 3 - 3, // y: -5 ~ 5
       ];
       attempts++;
       if (attempts > 100) break;
