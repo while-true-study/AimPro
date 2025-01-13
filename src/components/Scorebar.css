@@ -1,6 +1,6 @@
 .ScoreBar_body {
   position: absolute;
-  top: 5%;
+  top: 8%;
   left: 50%;
   width: 40%;
   height: 10%;
@@ -11,7 +11,33 @@
 }
 
 .box {
-  border: 2px solid black !important;
+  border: 1px solid black !important;
   margin-left: 2px;
-  background-color: green !important;
+  background-color: lightblue !important;
+  align-items: center;
+  justify-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.box p {
+  font-weight: bold;
+  margin: 0;
+  margin-top: 5%;
+}
+.box span {
+  flex-grow: 1;
+  font-size: 2em;
+}
+
+.score {
+  flex-grow: 5;
+}
+
+.time {
+  flex-grow: 1;
+}
+
+.rate {
+  flex-grow: 5;
 }

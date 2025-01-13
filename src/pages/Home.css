@@ -1,4 +1,4 @@
-#center {
+/* #center {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -7,5 +7,17 @@
   height: 5px;
 }
 #root {
-  /* cursor: none !important; */
+  cursor: crosshair;
+}
+*/
+/* CSS: html, body를 100%로 설정하여 전체 화면을 차지하도록 만듭니다 */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* 기본 스크롤을 숨깁니다 */
+}
+#root {
+  height: 100%;
+  overflow: hidden; /* React 앱이 root에 맞춰지도록 */
 }

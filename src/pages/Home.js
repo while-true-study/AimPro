@@ -1,56 +1,16 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, use } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { Raycaster, Vector2 } from 'three';
-import { PointerLockControls } from '@react-three/drei';
 import Background from '../components/Background';
 import Scorebar from '../components/ScoreBar';
+import Controls from '../components/Controls';
+import Crosshair from '../components/Crosshair';
 
-function Crosshair() {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        width: '5px',
-        height: '5px',
-        backgroundColor: 'red',
-        transform: 'translate(-50%, -50%)',
-        borderRadius: '50%',
-        zIndex: 100,
-      }}
-    />
-  );
-}
-// function ScoreBar({ score }) {
-//   return (
-//     <div>
-//       <div
-//         style={{
-//           position: 'absolute',
-//           top: '5%',
-//           left: '50%',
-//           width: '5px',
-//           height: '5px',
-//           backgroundColor: 'red',
-//           transform: 'translate(-50%, -50%)',
-//           borderRadius: '50%',
-//           zIndex: 100,
-//         }}
-//       >
-//         {score}
-//       </div>
-//     </div>
-//   );
-// }
-function ClickableMesh({ onRemove, position }) {
+function ClickableMesh({ onRemove, position, color }) {
   const meshRef = useRef();
-
   const handleClick = () => {
     if (onRemove) onRemove(); // 부모에서 전달된 제거 함수 호출
     console.log('Mesh removed!');
   };
-
   return (
     <mesh
       ref={meshRef}
@@ -59,48 +19,58 @@ function ClickableMesh({ onRemove, position }) {
       userData={{ onClick: handleClick }} // userData에 onClick 저장
     >
       <sphereGeometry args={[0.5]} />
-      <meshStandardMaterial color="blue" />
+      <meshStandardMaterial color={color} roughness={0.3} metalness={0.2} />
     </mesh>
   );
 }
 
-function FirstPersonControls() {
-  const { camera, scene } = useThree();
-  const raycaster = new Raycaster();
-  const mouse = new Vector2();
+function App() {
+  const [timer, setTimer] = useState(60);
+  const [end, setEnd] = useState(false);
+  useEffect(() => {
+    if (timer <= 0) {
+      setEnd(true);
+      return;
+    }
+    const timerId = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timerId);
+  }, [timer]);
 
   useEffect(() => {
-    const onMouseClick = (event) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    const movePointer = (event) => {
+      const xThreshold = 100;
+      const yThreshold = 100;
 
-      raycaster.setFromCamera(mouse, camera);
-
-      const intersects = raycaster.intersectObjects(scene.children);
-      if (intersects.length > 0) {
-        const clickedObject = intersects[0].object;
-        if (clickedObject.userData && clickedObject.userData.onClick) {
-          clickedObject.userData.onClick(); // userData의 onClick 호출
-        }
+      // 마우스가 화면의 특정 위치에 가까워지면 포인터를 구석으로 보냄
+      if (event.clientX < xThreshold && event.clientY < yThreshold) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      } else if (
+        event.clientX > window.innerWidth - xThreshold &&
+        event.clientY < yThreshold
+      ) {
+        window.scrollTo({
+          top: 0,
+          left: window.innerWidth,
+          behavior: 'smooth',
+        });
       }
     };
 
-    window.addEventListener('click', onMouseClick);
-    return () => window.removeEventListener('click', onMouseClick);
-  }, [camera, raycaster, mouse, scene]);
+    window.addEventListener('mousemove', movePointer);
+    return () => {
+      window.removeEventListener('mousemove', movePointer);
+    };
+  }, []);
 
-  return <PointerLockControls />;
-}
-
-function App() {
   const [meshes, setMeshes] = useState([
-    { id: 1, position: [0, 1, -5] },
-    { id: 2, position: [0, 1, -5] },
-    { id: 3, position: [0, 1, -5] },
-    { id: 4, position: [0, 1, -5] },
+    { id: 1, position: [0, 3, -5] },
+    { id: 2, position: [0, 4, -5] },
+    { id: 3, position: [0, 5, -5] },
+    { id: 4, position: [0, 6, -5] },
   ]);
 
-  // 충돌 여부 확인 함수
   const isPositionValid = (newPosition, existingPositions, minDistance = 1) => {
     for (const pos of existingPositions) {
       const distance = Math.sqrt(
@@ -118,12 +88,13 @@ function App() {
     let attempts = 0;
     do {
       newPosition = [
-        Math.random() * 5 - 5, // x: -5 ~ 5
-        Math.random() * 5 - 5, // y: -5 ~ 5
-        -5, // z 고정
+        Math.random() * 7 - 5, // x: -5 ~ 5
+        Math.random() * 7 - 5, // y: -5 ~ 5
+        // -5, // z 고정
+        Math.random() * 3 - 2, // y: -5 ~ 5
       ];
       attempts++;
-      if (attempts > 100) break; // 안전장치: 너무 많은 시도 시 중단
+      if (attempts > 100) break;
     } while (!isPositionValid(newPosition, existingPositions));
     return newPosition;
   };
@@ -142,29 +113,46 @@ function App() {
       return [...filteredMeshes, newMesh];
     });
   };
-  const createMesh = () => {};
   const [score, setScore] = useState(0);
+  const [userColor, setUserColor] = useState('blue');
+  const [tagetClick, setTargetClick] = useState(0);
+  const [backGroundClick, setBackGroundClick] = useState(0);
+  const rate = (100 / (backGroundClick / tagetClick)).toFixed(2);
+  useEffect(() => {
+    console.log(tagetClick, '// ', backGroundClick);
+  }, [tagetClick, backGroundClick]);
   return (
     <>
       <Crosshair />
-      <Scorebar score={score}></Scorebar>
-      <Canvas>
+      <Scorebar score={score} time={timer} rate={rate}></Scorebar>
+      <Canvas style={{ height: '100vh', width: '100vw' }}>
         <Background
-          onBackgroundClick={() => console.log('Miss Click')}
+          onBackgroundClick={() => setBackGroundClick(backGroundClick + 1)}
         ></Background>
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
+        <directionalLight
+          position={[5, 10, 5]} // 빛의 위치
+          intensity={1.5} // 빛의 강도
+          castShadow // 그림자 활성화
+          shadow-mapSize-width={1024} // 그림자 해상도
+          shadow-mapSize-height={1024}
+          shadow-camera-far={50}
+          shadow-camera-left={-10} // 그림자 범위
+          shadow-camera-right={10}
+          shadow-camera-top={10}
+          shadow-camera-bottom={-10}
+        />
         {meshes.map((mesh) => (
           <ClickableMesh
+            color={userColor}
             position={mesh.position}
             key={mesh.id}
             onRemove={() => {
               removeMesh(mesh.id);
-              createMesh();
+              setTargetClick(tagetClick + 1);
             }}
           />
         ))}
-        <FirstPersonControls />
+        <Controls></Controls>
       </Canvas>
     </>
   );
