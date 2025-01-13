@@ -1,0 +1,2 @@
+.ScoreBar_body{display:flex;height:10%;justify-content:center;left:50%;position:absolute;top:8%;transform:translate(-50%,-50%);width:40%;z-index:100}.box{align-items:center;background-color:#add8e6!important;border:1px solid #000!important;display:flex;flex-direction:column;justify-items:center;margin-left:2px}.box p{font-weight:700;margin:5% 0 0}.box span{flex-grow:1;font-size:2em}.score{flex-grow:5}.time{flex-grow:1}.rate{flex-grow:5}
+/*# sourceMappingURL=main.67a6611a.css.map*/
