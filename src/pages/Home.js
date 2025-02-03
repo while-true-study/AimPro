@@ -4,8 +4,15 @@ import Background from '../components/Background';
 import Scorebar from '../components/ScoreBar';
 import Controls from '../components/Controls';
 import Crosshair from '../components/Crosshair';
+import Infopanel from '../components/Infopanel';
+import { useStore } from 'zustand';
+import { useGameStore } from '../components/Store';
+import Result from '../components/Result';
+import ClicktoStart from '../components/ClicktoStart';
 
 function ClickableMesh({ onRemove, position, color }) {
+  const stating = useGameStore((state) => state.state);
+  // 클릭하기
   const meshRef = useRef();
   const handleClick = () => {
     if (onRemove) onRemove(); // 부모에서 전달된 제거 함수 호출
@@ -14,7 +21,7 @@ function ClickableMesh({ onRemove, position, color }) {
   return (
     <mesh
       ref={meshRef}
-      onClick={handleClick}
+      onClick={stating == 'playing' ? handleClick : undefined}
       position={position}
       userData={{ onClick: handleClick }} // userData에 onClick 저장
     >
@@ -25,45 +32,8 @@ function ClickableMesh({ onRemove, position, color }) {
 }
 
 function App() {
-  const [timer, setTimer] = useState(60);
-  const [end, setEnd] = useState(false);
-  useEffect(() => {
-    if (timer <= 0) {
-      setEnd(true);
-      return;
-    }
-    const timerId = setInterval(() => {
-      setTimer((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timerId);
-  }, [timer]);
-
-  useEffect(() => {
-    const movePointer = (event) => {
-      const xThreshold = 100;
-      const yThreshold = 100;
-
-      // 마우스가 화면의 특정 위치에 가까워지면 포인터를 구석으로 보냄
-      if (event.clientX < xThreshold && event.clientY < yThreshold) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      } else if (
-        event.clientX > window.innerWidth - xThreshold &&
-        event.clientY < yThreshold
-      ) {
-        window.scrollTo({
-          top: 0,
-          left: window.innerWidth,
-          behavior: 'smooth',
-        });
-      }
-    };
-
-    window.addEventListener('mousemove', movePointer);
-    return () => {
-      window.removeEventListener('mousemove', movePointer);
-    };
-  }, []);
-
+  const timer = useGameStore((state) => state.timer);
+  const stating = useGameStore((state) => state.state);
   const [meshes, setMeshes] = useState([
     { id: 1, position: [0, 3, -5] },
     { id: 2, position: [0, 4, -5] },
@@ -72,6 +42,7 @@ function App() {
   ]);
 
   const isPositionValid = (newPosition, existingPositions, minDistance = 1) => {
+    // 괜찮은 위치인가
     for (const pos of existingPositions) {
       const distance = Math.sqrt(
         Math.pow(newPosition[0] - pos[0], 2) +
@@ -88,10 +59,10 @@ function App() {
     let attempts = 0;
     do {
       newPosition = [
-        Math.random() * 7 - 7, // x: -5 ~ 5
-        Math.random() * 7 - 7, // y: -5 ~ 5
+        Math.random() * 5 - 2.5, // x: -5 ~ 5
+        Math.random() * 5 - 2.5, // y: -5 ~ 5
         // -5, // z 고정
-        Math.random() * 3 - 3, // y: -5 ~ 5
+        Math.random() * 2 - 5, // y: -5 ~ 5
       ];
       attempts++;
       if (attempts > 100) break;
@@ -100,9 +71,10 @@ function App() {
   };
 
   const removeMesh = (id) => {
+    // 지우기
     setMeshes((prevMeshes) => {
       const filteredMeshes = prevMeshes.filter((mesh) => mesh.id !== id); // 제거시킴
-      setScore(score + 500);
+      setScore(timer >= 20 ? score + 500 : score + 1000);
       const newId = Math.max(...prevMeshes.map((mesh) => mesh.id)) + 1; // 새로운 id생성
       const newPosition = generateRandomPosition(
         // position만들기
@@ -118,40 +90,45 @@ function App() {
   const [tagetClick, setTargetClick] = useState(0);
   const [backGroundClick, setBackGroundClick] = useState(0);
   const rate = (100 / (backGroundClick / tagetClick)).toFixed(2);
+  const [viewing, setViewing] = useState(false);
   useEffect(() => {
-    console.log(tagetClick, '// ', backGroundClick);
+    console.log(tagetClick, '/', backGroundClick, '/', stating);
   }, [tagetClick, backGroundClick]);
   return (
     <>
-      <Crosshair />
-      <Scorebar score={score} time={timer} rate={rate}></Scorebar>
-      <Canvas style={{ height: '100vh', width: '100vw' }}>
+      <Crosshair Chair={'dot'} />
+      <Scorebar
+        score={score}
+        time={timer}
+        rate={rate}
+        view={viewing}
+      ></Scorebar>
+      <ClicktoStart></ClicktoStart>
+      <Canvas style={{ height: '100%', width: '100%' }}>
         <Background
           onBackgroundClick={() => setBackGroundClick(backGroundClick + 1)}
         ></Background>
         <directionalLight
           position={[5, 10, 5]} // 빛의 위치
           intensity={1.5} // 빛의 강도
-          castShadow // 그림자 활성화
-          shadow-mapSize-width={1024} // 그림자 해상도
-          shadow-mapSize-height={1024}
-          shadow-camera-far={50}
-          shadow-camera-left={-10} // 그림자 범위
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
         />
-        {meshes.map((mesh) => (
-          <ClickableMesh
-            color={userColor}
-            position={mesh.position}
-            key={mesh.id}
-            onRemove={() => {
-              removeMesh(mesh.id);
-              setTargetClick(tagetClick + 1);
-            }}
-          />
-        ))}
+        {stating == 'wating' ? (
+          <Infopanel></Infopanel>
+        ) : stating == 'playing' ? (
+          meshes.map((mesh) => (
+            <ClickableMesh
+              color={userColor}
+              position={mesh.position}
+              key={mesh.id}
+              onRemove={() => {
+                removeMesh(mesh.id);
+                setTargetClick(tagetClick + 1);
+              }}
+            />
+          ))
+        ) : (
+          <Result></Result>
+        )}
         <Controls></Controls>
       </Canvas>
     </>
