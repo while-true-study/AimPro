@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Crosshair = ({ Chair }) => {
+const Crosshair = ({ Chair, view }) => {
   return (
     // 점
-    Chair == 'dot' ? (
+    Chair === 'dot' ? (
       <div
         style={{
           position: 'absolute',
@@ -15,6 +15,7 @@ const Crosshair = ({ Chair }) => {
           transform: 'translate(-50%, -50%)',
           borderRadius: '50%',
           zIndex: 100,
+          visibility: view ? 'visible' : 'hidden',
         }}
       />
     ) : (

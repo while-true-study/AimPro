@@ -1,39 +1,54 @@
-import React, { useEffect } from 'react';
-import { useConTrolStore } from './Store';
+import React, { useEffect, useState } from 'react';
 
-const ClicktoStart = () => {
-  const locked = useConTrolStore((state) => state.isLocked);
-  const setIsLocked = useConTrolStore((state) => state.setIsLocked);
-
+const ClicktoStart = ({ reqInside, pointerLocked }) => {
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const unsubscribe = useConTrolStore.subscribe(
-      (state) => state.isLocked, // 구독할 상태
-      (isLocked) => {
-        // 상태가 변경될 때마다 실행할 로직
-        setIsLocked(isLocked);
-      },
-    );
+    const timeout = setTimeout(() => {
+      setVisible(true);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, []);
 
-    // 클린업: 컴포넌트 언마운트 시 구독 해제
-    return () => unsubscribe();
-  }, [setIsLocked]);
-  return locked ? (
+  const handleClick = (e) => {
+    if (pointerLocked) {
+      e.preventDefault();
+      return;
+    }
+  };
+
+  return (
     <div
+      onClick={handleClick}
       style={{
-        width: '100px',
-        height: '100px',
-        opacity: 0.8,
+        width: '100%',
+        height: '100%',
+        opacity: 0.65,
         backgroundColor: 'blue',
         zIndex: 50,
-        position: 'absolute', // 버튼을 절대 위치로 설정
-        top: '50%', // 화면 중앙에 위치하도록 설정
+        position: 'absolute',
+        top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        pointerEvents: 'none',
       }}
     >
-      <button>Click to Start</button>
+      <button
+        onClick={reqInside}
+        style={{
+          padding: '12px 24px',
+          fontSize: '16px',
+          transition: 'opacity 1s ease',
+          opacity: visible ? 1 : 0,
+          borderRadius: '5px',
+        }}
+      >
+        Click to Start
+      </button>
     </div>
-  ) : null;
+  );
 };
 
 export default ClicktoStart;

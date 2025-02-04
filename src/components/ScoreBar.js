@@ -9,15 +9,21 @@ const Scorebar = ({ score, rate, time, view }) => {
   //   setTimer: state.setTimer,
   //   setEnd: state.setEnd,
   // }));
-
+  const gameState = useGameStore((state) => state.state);
   const timer = useGameStore((state) => state.timer);
   const setTimer = useGameStore((state) => state.setTimer);
   const setEnd = useGameStore((state) => state.setEnd);
   const setState = useGameStore((state) => state.setState);
 
+  const setRecording = useGameStore((state) => state.setRecording);
+
   useEffect(() => {
+    if (gameState !== 'playing') {
+      return;
+    }
     if (timer <= 0) {
       setState('Endgame');
+      setRecording({ score, rate });
       return;
     }
     const timerId = setInterval(() => {
@@ -25,8 +31,7 @@ const Scorebar = ({ score, rate, time, view }) => {
     }, 1000);
 
     return () => clearInterval(timerId);
-  }, [timer, setTimer, setEnd]);
-
+  }, [timer, setTimer, setEnd, gameState]);
   return (
     <div
       className="ScoreBar_body"
@@ -42,7 +47,7 @@ const Scorebar = ({ score, rate, time, view }) => {
       </div>
       <div className="rate box">
         <p>명중률</p>
-        <span>{rate}</span>
+        <span>{rate}%</span>
       </div>
     </div>
   );

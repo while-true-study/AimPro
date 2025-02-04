@@ -1,6 +1,4 @@
 import React from 'react';
-import { MeshBasicMaterial } from 'three';
-import { Canvas, useThree } from '@react-three/fiber';
 import { useGameStore } from './Store';
 
 const Background = ({ onBackgroundClick }) => {
@@ -8,7 +6,7 @@ const Background = ({ onBackgroundClick }) => {
   return (
     <mesh
       position={[0, 0, -10]}
-      onClick={stating == 'playing' ? onBackgroundClick : undefined}
+      onClick={stating === 'playing' ? onBackgroundClick : undefined}
     >
       <planeGeometry args={[100, 100]}></planeGeometry>
       {/* <meshBasicMaterial color="gray"></meshBasicMaterial> */}

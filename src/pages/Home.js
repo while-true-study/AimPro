@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, use } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
 import Background from '../components/Background';
 import Scorebar from '../components/ScoreBar';
@@ -9,6 +9,7 @@ import { useStore } from 'zustand';
 import { useGameStore } from '../components/Store';
 import Result from '../components/Result';
 import ClicktoStart from '../components/ClicktoStart';
+import { WebGLRenderer } from 'three';
 
 function ClickableMesh({ onRemove, position, color }) {
   const stating = useGameStore((state) => state.state);
@@ -52,7 +53,6 @@ function App() {
     }
     return true; // 충돌 없음
   };
-
   // 새로운 랜덤 위치 생성 함수
   const generateRandomPosition = (existingPositions) => {
     let newPosition;
@@ -69,12 +69,12 @@ function App() {
     } while (!isPositionValid(newPosition, existingPositions));
     return newPosition;
   };
-
+  const setScore = useGameStore((state) => state.setScore);
   const removeMesh = (id) => {
     // 지우기
     setMeshes((prevMeshes) => {
       const filteredMeshes = prevMeshes.filter((mesh) => mesh.id !== id); // 제거시킴
-      setScore(timer >= 20 ? score + 500 : score + 1000);
+      setScore(timer >= 20 ? 500 : 1000);
       const newId = Math.max(...prevMeshes.map((mesh) => mesh.id)) + 1; // 새로운 id생성
       const newPosition = generateRandomPosition(
         // position만들기
@@ -85,36 +85,119 @@ function App() {
       return [...filteredMeshes, newMesh];
     });
   };
-  const [score, setScore] = useState(0);
+  // const [score, setScore] = useState(0);
+  const score = useGameStore((state) => state.score);
   const [userColor, setUserColor] = useState('blue');
   const [tagetClick, setTargetClick] = useState(0);
   const [backGroundClick, setBackGroundClick] = useState(0);
-  const rate = (100 / (backGroundClick / tagetClick)).toFixed(2);
+  const rateCal = (100 / (backGroundClick / tagetClick)).toFixed(2);
+
+  const initing = () => {
+    setTargetClick(0);
+    setBackGroundClick(0);
+  };
+
+  useEffect(() => {
+    const rateCal = (100 / (backGroundClick / tagetClick)).toFixed(2);
+    setRate(rateCal);
+  }, [rateCal]);
+
+  const rate = useGameStore((s) => s.rate);
+  const setRate = useGameStore((s) => s.setRate);
+
   const [viewing, setViewing] = useState(false);
   useEffect(() => {
     console.log(tagetClick, '/', backGroundClick, '/', stating);
   }, [tagetClick, backGroundClick]);
+
+  const [pointerLocked, setPointerLocked] = useState(false);
+  const rendererRef = useRef(null);
+  useEffect(() => {
+    // WebGLRenderer를 한 번만 생성
+    // if (!rendererRef.current) {
+    //   rendererRef.current = new WebGLRenderer();
+    //   document.body.appendChild(rendererRef.current.domElement);
+    // }
+
+    const handlePointerLockChange = () => {
+      // setPointerLocked(
+      //   document.pointerLockElement === rendererRef.current.domElement,
+      // );
+
+      if (null != document.pointerLockElement) {
+        console.log('들어감?');
+        setPointerLocked(true); // 들어감
+      } else {
+        // console.log(rendererRef.current.domElement); // 탈출해도 canvas
+        console.log(document.pointerLockElement); // 탈출하면 null
+        setPointerLocked(false); // 나감
+      }
+    };
+
+    document.addEventListener('pointerlockchange', handlePointerLockChange);
+    return () => {
+      // Cleanup
+      document.removeEventListener(
+        'pointerlockchange',
+        handlePointerLockChange,
+      );
+
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+        rendererRef.current.domElement.remove();
+        rendererRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('Pointer Locked:', pointerLocked);
+  }, [pointerLocked]);
+
+  // const reqInside = () => {
+  //   setPointerLocked(true);
+  // };
+
+  const reqInside = () => {
+    try {
+      // pointer lock을 시도하기 전에 상태를 확인하고 실행
+      setPointerLocked(true); // 이미 pointer lock 상태라면 아무 작업도 안함
+      document.body.requestPointerLock(); // pointer lock 요청
+    } catch (error) {
+      console.error('Pointer Lock 처리 중 오류:', error);
+    }
+  };
   return (
     <>
-      <Crosshair Chair={'dot'} />
+      <Crosshair Chair={'dot'} view={pointerLocked ? true : false} />
       <Scorebar
         score={score}
         time={timer}
         rate={rate}
-        view={viewing}
+        view={pointerLocked}
       ></Scorebar>
-      <ClicktoStart></ClicktoStart>
-      <Canvas style={{ height: '100%', width: '100%' }}>
+      {pointerLocked ? null : (
+        <ClicktoStart
+          reqInside={reqInside}
+          pointerLocked={pointerLocked}
+        ></ClicktoStart>
+      )}
+      <Canvas
+        style={{
+          height: '100%',
+          width: '100%',
+        }}
+      >
         <Background
           onBackgroundClick={() => setBackGroundClick(backGroundClick + 1)}
         ></Background>
         <directionalLight
-          position={[5, 10, 5]} // 빛의 위치
+          position={[5, 9, 5]} // 빛의 위치
           intensity={1.5} // 빛의 강도
         />
-        {stating == 'wating' ? (
+        {stating === 'wating' ? (
           <Infopanel></Infopanel>
-        ) : stating == 'playing' ? (
+        ) : stating === 'playing' ? (
           meshes.map((mesh) => (
             <ClickableMesh
               color={userColor}
@@ -127,7 +210,7 @@ function App() {
             />
           ))
         ) : (
-          <Result></Result>
+          <Result init={initing}></Result>
         )}
         <Controls></Controls>
       </Canvas>
