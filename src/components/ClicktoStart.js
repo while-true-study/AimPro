@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Option from './Option';
+import CTSbutton from './CTSbutton';
 
 const ClicktoStart = ({ reqInside, pointerLocked }) => {
   const [visible, setVisible] = useState(false);
@@ -35,18 +37,7 @@ const ClicktoStart = ({ reqInside, pointerLocked }) => {
         pointerEvents: 'none',
       }}
     >
-      <button
-        onClick={reqInside}
-        style={{
-          padding: '12px 24px',
-          fontSize: '16px',
-          transition: 'opacity 1s ease',
-          opacity: visible ? 1 : 0,
-          borderRadius: '5px',
-        }}
-      >
-        Click to Start
-      </button>
+      <CTSbutton onClick={reqInside} visible={visible}></CTSbutton>
     </div>
   );
 };

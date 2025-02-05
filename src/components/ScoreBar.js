@@ -33,23 +33,27 @@ const Scorebar = ({ score, rate, time, view }) => {
     return () => clearInterval(timerId);
   }, [timer, setTimer, setEnd, gameState]);
   return (
-    <div
-      className="ScoreBar_body"
-      style={{ visibility: SCBview ? 'visible' : 'hidden' }}
-    >
-      <div className="score box">
-        <p>Score</p>
-        <span>{score}</span>
-      </div>
-      <div className="time box">
-        <p>남은 초</p>
-        <span>{timer}</span>
-      </div>
-      <div className="rate box">
-        <p>명중률</p>
-        <span>{rate}%</span>
-      </div>
-    </div>
+    <>
+      {gameState === 'playing' ? (
+        <div
+          className="ScoreBar_body"
+          style={{ visibility: SCBview ? 'visible' : 'hidden' }}
+        >
+          <div className="score box">
+            <p>Score</p>
+            <span>{score}</span>
+          </div>
+          <div className="time box">
+            <p>남은 초</p>
+            <span>{timer}</span>
+          </div>
+          <div className="rate box">
+            <p>명중률</p>
+            <span>{rate}%</span>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 };
 

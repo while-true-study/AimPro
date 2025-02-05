@@ -49,10 +49,19 @@ export const useGameStore = create((set) => ({
 }));
 
 export const useOptionStore = create((set) => ({
+  OptionView: false,
   crosshair: 'dot',
-  MeshX: Math.random() * 5 - 2.5,
-  MeshY: Math.random() * 5 - 2.5,
-  MeshZ: Math.random() * 2 - 5,
+  MeshCount: 4,
+  OptionClick: (newState) => {
+    set((state) => ({
+      OptionView: !state.OptionView,
+    }));
+  },
+  setMeshCount: (newState) => {
+    set((state) => ({
+      MeshCount: newState,
+    }));
+  },
 }));
 
 export const useConTrolStore = create((set) => ({
