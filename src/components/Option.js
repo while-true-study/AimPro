@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { useGameStore, useOptionStore } from './Store';
 
 const Option = () => {
-  const view = useOptionStore((state) => state.OptionView);
   const setState = useGameStore((state) => state.setState);
   const ColorChange = useOptionStore((state) => state.ColorChange);
   const ChangeCH = useOptionStore((state) => state.ChangeCH);
@@ -54,7 +53,7 @@ const Option = () => {
   return (
     <>
       <Text color="black" position={[0, 3.5, 0]} fontSize={0.5}>
-        공 색 변경하기
+        Change Ball Color
       </Text>
       {colors.map((color, i) => (
         <mesh
@@ -66,7 +65,7 @@ const Option = () => {
         </mesh>
       ))}
       <Text color="black" position={[0, 1.5, 0]} fontSize={0.5}>
-        크로스 헤어 변경하기
+        Change Crosshair
       </Text>
       <group position={[1.5, 0.5, 0]} onClick={() => ChangeCH('Cross')}>
         {/* 세로 막대 */}
@@ -87,7 +86,7 @@ const Option = () => {
       </mesh>
 
       <Text color="black" position={[0, -0.5, 0]} fontSize={0.5}>
-        공 개수 변경하기
+        Change Number of Balls
       </Text>
       {positions.map((x, i) => (
         <group position={[x, -1.5, 0]} onClick={() => setMeshCount(i + 1)}>
@@ -112,7 +111,7 @@ const Option = () => {
         fontSize={0.5}
         onClick={() => setState('wating')}
       >
-        돌아가기
+        Go Back
       </Text>
     </>
   );
