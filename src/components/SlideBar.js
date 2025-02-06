@@ -6,10 +6,10 @@ const SliderBar = () => {
   //   const [value, setValue] = useState(5);
   //   const [dragging, setDragging] = useState(false);
   //   const { viewport } = useThree();
-  //   const viewportWidth = viewport?.width ?? 10; // 🔥 오류 방지: 기본값 설정
+  //   const viewportWidth = viewport?.width ?? 10;
   //   const handleDrag = (event) => {
   //     if (!dragging) return;
-  //     const deltaX = event.movementX / viewportWidth; // 🔥 여기서 오류 방지됨
+  //     const deltaX = event.movementX / viewportWidth;
   //     const newValue = Math.max(1, Math.min(10, value + deltaX * 10));
   //     setValue(newValue);
   //   };

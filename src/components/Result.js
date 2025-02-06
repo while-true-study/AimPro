@@ -18,11 +18,8 @@ const Result = ({ init }) => {
   };
   return (
     <>
-      <Text position={[-2.5, 3, 0]} color="black" fontSize={0.8}>
-        결과
-      </Text>
       <Text
-        position={[0.5, 3, 0]}
+        position={[-1, 3, 0]}
         color="black"
         fontSize={0.8}
         onClick={handleClick}
@@ -30,7 +27,7 @@ const Result = ({ init }) => {
         다시하기
       </Text>
       <Text
-        position={[3.5, 3, 0]}
+        position={[2, 3, 0]}
         color="black"
         fontSize={0.8}
         onClick={HomeClick}

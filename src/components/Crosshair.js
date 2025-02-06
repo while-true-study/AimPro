@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useOptionStore } from './Store';
 
-const Crosshair = ({ Chair, view }) => {
+const Crosshair = ({ view }) => {
+  const Chair = useOptionStore((state) => state.crosshair);
+  useEffect(() => {
+    console.log(Chair);
+  }, [Chair]);
   return (
     // 점
     <>

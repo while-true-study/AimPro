@@ -1,26 +1,20 @@
 import { create } from 'zustand';
 
 export const useGameStore = create((set) => ({
-  state: 'wating', // 게임 상태
-  result: '', // 결과 정보
-  gamerecord: [], // 게임 전적
+  state: 'wating', // 상태
+  result: '', // 결과
+  gamerecord: [], // 전적
   scorebarviewing: false,
-  timer: 10,
-  score: 0,
-  rate: 0,
-  // setRecord: (newResult) => {
-  //   // 전적 넣기
-  //   set((prev) => ({
-  //     gamerecord: [...prev.gamerecord, newResult],
-  //   }));
-  // },
+  timer: 10, // 게임시간
+  score: 0, // 점수
+  rate: 0, // 명중률
   setRate: (newRate) =>
     set((state) => ({
       rate: newRate,
     })),
   setRecording: (newRecording) =>
     set((state) => ({
-      gamerecord: [...state.gamerecord, newRecording], // 전적 기록
+      gamerecord: [...state.gamerecord, newRecording],
     })),
   setScore: (newScore) =>
     set((state) => ({
@@ -49,12 +43,17 @@ export const useGameStore = create((set) => ({
 }));
 
 export const useOptionStore = create((set) => ({
-  OptionView: false,
-  crosshair: 'dot',
-  MeshCount: 4,
-  OptionClick: (newState) => {
+  crosshair: 'dot', // 크로스 헤어
+  MeshCount: 4, // 공 개수
+  MeshColor: 'blue', // 공 색깔
+  ColorChange: (newState) => {
     set((state) => ({
-      OptionView: !state.OptionView,
+      MeshColor: newState,
+    }));
+  },
+  ChangeCH: (newState) => {
+    set((state) => ({
+      crosshair: newState,
     }));
   },
   setMeshCount: (newState) => {
@@ -62,10 +61,4 @@ export const useOptionStore = create((set) => ({
       MeshCount: newState,
     }));
   },
-}));
-
-export const useConTrolStore = create((set) => ({
-  isLocked: false,
-  toggleLocked: () => set((state) => ({ isLocked: !state.isLocked })),
-  setIsLocked: (newLocked) => set((state) => ({ isLocked: newLocked })),
 }));

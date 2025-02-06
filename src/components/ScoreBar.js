@@ -2,13 +2,8 @@ import React, { useEffect } from 'react';
 import './Scorebar.css';
 import { useGameStore } from './Store';
 
-const Scorebar = ({ score, rate, time, view }) => {
+const Scorebar = ({ score, rate }) => {
   const SCBview = useGameStore((state) => state.scorebarviewing);
-  // const { timer, setTimer, setEnd } = useGameStore((state) => ({
-  //   timer: state.timer,
-  //   setTimer: state.setTimer,
-  //   setEnd: state.setEnd,
-  // }));
   const gameState = useGameStore((state) => state.state);
   const timer = useGameStore((state) => state.timer);
   const setTimer = useGameStore((state) => state.setTimer);
@@ -22,7 +17,7 @@ const Scorebar = ({ score, rate, time, view }) => {
       return;
     }
     if (timer <= 0) {
-      setState('Endgame');
+      setState('endgame');
       setRecording({ score, rate });
       return;
     }

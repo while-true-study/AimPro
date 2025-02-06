@@ -1,6 +1,6 @@
 import { Text } from '@react-three/drei';
 import React from 'react';
-import { useGameStore, useOptionStore } from './Store';
+import { useGameStore } from './Store';
 
 const Infopanel = () => {
   const setstate = useGameStore((state) => state.setState);
@@ -8,9 +8,8 @@ const Infopanel = () => {
   const handleClick = () => {
     setstate('playing');
   };
-  const OpClick = useOptionStore((state) => state.OptionClick);
   const onClick = () => {
-    setstate('Optioning');
+    setstate('optioning');
   };
   return (
     <>

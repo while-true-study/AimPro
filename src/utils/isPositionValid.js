@@ -1,4 +1,5 @@
 export const isPositionValid = (
+  // 겹치니?
   newPosition,
   existingPositions,
   minDistance = 1,
@@ -14,6 +15,7 @@ export const isPositionValid = (
 };
 
 export const generateRandomPosition = (existingPositions) => {
+  // 새로운 포지션 만들기
   let newPosition;
   let attempts = 0;
   do {

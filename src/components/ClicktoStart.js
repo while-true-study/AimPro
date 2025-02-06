@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Option from './Option';
 import CTSbutton from './CTSbutton';
 
 const ClicktoStart = ({ reqInside, pointerLocked }) => {
@@ -25,7 +24,7 @@ const ClicktoStart = ({ reqInside, pointerLocked }) => {
         width: '100%',
         height: '100%',
         opacity: 0.65,
-        backgroundColor: 'blue',
+        backgroundColor: 'black',
         zIndex: 50,
         position: 'absolute',
         top: '50%',
