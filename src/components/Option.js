@@ -51,9 +51,6 @@ const Option = () => {
       [0.3, -0.4, 0.01],
     ], // 6
   ];
-  useEffect(() => {
-    console.log(view);
-  }, [view]);
   return (
     <>
       <Text color="black" position={[0, 3.5, 0]} fontSize={0.5}>

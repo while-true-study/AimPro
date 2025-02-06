@@ -3,9 +3,6 @@ import { useOptionStore } from './Store';
 
 const Crosshair = ({ view }) => {
   const Chair = useOptionStore((state) => state.crosshair);
-  useEffect(() => {
-    console.log(Chair);
-  }, [Chair]);
   return (
     // 점
     <>

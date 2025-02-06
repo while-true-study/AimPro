@@ -8,7 +8,6 @@ const GenMesh = ({ onRemove, position }) => {
 
   const handleClick = () => {
     if (onRemove) onRemove(); // 부모에서 전달된 제거 함수 호출
-    console.log('Mesh removed!');
   };
   const MeshColor = useOptionStore((state) => state.MeshColor);
   return (

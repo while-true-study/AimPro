@@ -5,7 +5,7 @@ export const useGameStore = create((set) => ({
   result: '', // 결과
   gamerecord: [], // 전적
   scorebarviewing: false,
-  timer: 10, // 게임시간
+  timer: 60, // 게임시간
   score: 0, // 점수
   rate: 0, // 명중률
   setRate: (newRate) =>
@@ -28,7 +28,7 @@ export const useGameStore = create((set) => ({
       scorebarviewing: true,
       score: 0,
       rate: 0,
-      timer: 10,
+      timer: 60,
     }));
   },
   setScoreBarViewing: (newViewing) => {

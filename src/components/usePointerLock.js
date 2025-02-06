@@ -5,7 +5,7 @@ export const usePointerLock = () => {
 
   useEffect(() => {
     const handlePointerLockChange = () => {
-      setPointerLocked(!!document.pointerLockElement);
+      setPointerLocked(document.pointerLockElement);
     };
 
     document.addEventListener('pointerlockchange', handlePointerLockChange);

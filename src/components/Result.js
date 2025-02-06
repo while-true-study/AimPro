@@ -4,9 +4,6 @@ import { useGameStore } from './Store';
 
 const Result = ({ init }) => {
   const Gamerecord = useGameStore((state) => state.gamerecord);
-  useEffect(() => {
-    console.log(Gamerecord);
-  });
   const setstate = useGameStore((state) => state.setState);
   const handleClick = () => {
     setstate('playing');
