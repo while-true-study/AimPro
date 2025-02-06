@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/AimPro/static/css/main.67a6611a.css",
-    "main.js": "/AimPro/static/js/main.f68c413f.js",
+    "main.js": "/AimPro/static/js/main.af714227.js",
     "index.html": "/AimPro/index.html",
     "main.67a6611a.css.map": "/AimPro/static/css/main.67a6611a.css.map",
-    "main.f68c413f.js.map": "/AimPro/static/js/main.f68c413f.js.map"
+    "main.af714227.js.map": "/AimPro/static/js/main.af714227.js.map"
   },
   "entrypoints": [
     "static/css/main.67a6611a.css",
-    "static/js/main.f68c413f.js"
+    "static/js/main.af714227.js"
   ]
 }
